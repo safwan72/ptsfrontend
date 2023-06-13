@@ -9,11 +9,11 @@ import Fab from "@mui/material/Fab";
 import Typography from "@mui/material/Typography";
 import { styled, useTheme } from "@mui/material/styles";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import { useSelector,connect } from "react-redux";
+import { useSelector, connect } from "react-redux";
 import axios from "axios";
 import { HOSTURL } from "../utils/hostURL";
 import Avatar from "@mui/material/Avatar";
-import * as actions from '../app/actioncreator';
+import * as actions from "../app/actioncreator";
 import { useNavigate } from "react-router-dom";
 const CssTextField = styled(TextField)({
   "& input": {
@@ -53,83 +53,90 @@ const ColorButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const mapDispatchToProps = (dispatch)=>{
-  return{
-      loading:(load)=>dispatch(actions.loading(load))
-  }
-}
-
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loading: (load) => dispatch(actions.loading(load)),
+  };
+};
 
 const Profile = (props) => {
   const [picstate, setpicstate] = React.useState(null);
   const [showpic, setshowpic] = React.useState(null);
   const user_id = useSelector((state) => state?.user_id);
+  const isAdmin = useSelector((state) => state?.user_details?.isAdmin);
   const theme = useTheme();
   const navigate = useNavigate();
 
   const [userDetails, setuserDetails] = React.useState({});
   React.useEffect(() => {
     async function getData() {
-      const request = await axios.get(`${HOSTURL}customerupdate/${user_id}/`);
-      setuserDetails(request?.data);
-      setshowpic(request?.data?.profile_pic);
+      if (isAdmin) {
+        const request = await axios.get(`${HOSTURL}adminupdate/${user_id}/`);
+        setuserDetails(request?.data);
+        setshowpic(request?.data?.profile_pic);
+      } else {
+        const request = await axios.get(`${HOSTURL}customerupdate/${user_id}/`);
+        setuserDetails(request?.data);
+        setshowpic(request?.data?.profile_pic);
+      }
     }
     getData();
-  }, [user_id]);
-  const { control, handleSubmit,register,reset} = useForm({
+  }, [user_id, isAdmin]);
+  const { control, handleSubmit, register, reset } = useForm({
     defaultValues: {
-      phone: userDetails?.phone?userDetails?.phone:'',
-      address: userDetails?.address?userDetails?.address:'',
-      full_name: userDetails?.full_name?userDetails?.full_name:'',
+      phone: userDetails?.phone ? userDetails?.phone : "",
+      address: userDetails?.address ? userDetails?.address : "",
+      full_name: userDetails?.full_name ? userDetails?.full_name : "",
     },
   });
   React.useEffect(() => {
-reset({
-    phone: userDetails?.phone?userDetails?.phone:'',
-    address: userDetails?.address?userDetails?.address:'',
-    full_name: userDetails?.full_name?userDetails?.full_name:'',
-})
-  }, [reset,userDetails]);
+    reset({
+      phone: userDetails?.phone ? userDetails?.phone : "",
+      address: userDetails?.address ? userDetails?.address : "",
+      full_name: userDetails?.full_name ? userDetails?.full_name : "",
+    });
+  }, [reset, userDetails]);
 
   const onSubmit = (values) => {
-
     let formdata = new FormData();
     const user = {
-        username: values.username,
-        email: values.email,
-        id: user_id,
-    }
-    formdata.append('user', user)
-    formdata.append('full_name', values.full_name)
-    formdata.append('address', values.address)
-    formdata.append('phone', values.phone)
+      username: values.username,
+      email: values.email,
+      id: user_id,
+    };
+    formdata.append("user", user);
+    formdata.append("full_name", values.full_name);
+    formdata.append("address", values.address);
+    formdata.append("phone", values.phone);
     if (picstate !== null) {
-        formdata.append('profile_pic', picstate)
+      formdata.append("profile_pic", picstate);
+    } else {
+      formdata.append("profile_pic", null);
     }
-    else {
-        formdata.append('profile_pic', null)
+    let url = null;
+    if (isAdmin) {
+      url = `${HOSTURL}adminupdate/${user_id}/`;
+    } else {
+      url = `${HOSTURL}customerupdate/${user_id}/`;
     }
-   const url = `${HOSTURL}customerupdate/${user_id}/`
-    axios.put(url, formdata)
-        .then(res => {
-          setuserDetails(res?.data);
-            // setloader(false);
-        })
-        .catch(err => {
-            console.log(err);
-
-
-        })
-        return navigate('/home')
-
-  }
+    axios
+      .put(url, formdata)
+      .then((res) => {
+        setuserDetails(res?.data);
+        // setloader(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    return navigate("/home");
+  };
   return (
     <HOC>
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" sx={{ textAlign: "center" }}>
           Profile
         </Typography>
-        <Box sx={{ mt: 3,mb:5 }}>
+        <Box sx={{ mt: 3, mb: 5 }}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid
               container
@@ -151,13 +158,9 @@ reset({
                   multiple
                   type="file"
                   onChange={(event) => {
-                    setshowpic(
-                        URL.createObjectURL(event.target.files[0])
-                    );
+                    setshowpic(URL.createObjectURL(event.target.files[0]));
                     setpicstate(event.target.files[0]);
-
-                }}
-                  // onChange={this.handleUploadClick}
+                  }}
                 />
                 <label htmlFor="contained-button-file">
                   <Fab component="span" size="small">
@@ -180,12 +183,12 @@ reset({
                 />
               </Grid>
             </Grid>
-            <Box sx={{my:1,mt:5}}>
-              <Grid container spacing={2} sx={{wordBreak:'break-word'}}>
+            <Box sx={{ my: 1, mt: 5 }}>
+              <Grid container spacing={2} sx={{ wordBreak: "break-word" }}>
                 <Grid item xs={6} sm={3}>
                   <Typography variant="caption">Username :</Typography>
                 </Grid>
-                <Grid item xs={6} sm={3} sx={{ textAlign: "left"}}>
+                <Grid item xs={6} sm={3} sx={{ textAlign: "left" }}>
                   <Typography variant="caption">
                     {userDetails?.user?.username}
                   </Typography>
@@ -193,12 +196,12 @@ reset({
                 <Grid item xs={0} sm={6} sx={{ textAlign: "left" }}></Grid>
               </Grid>
             </Box>
-            <Box sx={{my:1}}>
-              <Grid container spacing={2} sx={{wordBreak:'break-word'}}>
+            <Box sx={{ my: 1 }}>
+              <Grid container spacing={2} sx={{ wordBreak: "break-word" }}>
                 <Grid item xs={6} sm={3}>
                   <Typography variant="caption">Full Name :</Typography>
                 </Grid>
-                <Grid item xs={6} sm={3} sx={{ textAlign: "left"}}>
+                <Grid item xs={6} sm={3} sx={{ textAlign: "left" }}>
                   <Typography variant="caption">
                     {userDetails?.full_name}
                   </Typography>
@@ -206,9 +209,9 @@ reset({
                 <Grid item xs={0} sm={6} sx={{ textAlign: "left" }}></Grid>
               </Grid>
             </Box>
-            <Box sx={{my:1,mt:2}}>
-              <Grid container spacing={2} sx={{wordBreak:'break-word'}}>
-                <Grid item xs={6} sm={3} >
+            <Box sx={{ my: 1, mt: 2 }}>
+              <Grid container spacing={2} sx={{ wordBreak: "break-word" }}>
+                <Grid item xs={6} sm={3}>
                   <Typography variant="caption">Email :</Typography>
                 </Grid>
                 <Grid item xs={6} sm={3} sx={{ textAlign: "left" }}>
@@ -231,7 +234,7 @@ reset({
                   label="Full Name"
                   name="full_name"
                   type="text"
-                  inputRef={register('full_name')}
+                  inputRef={register("full_name")}
                 />
               )}
             />
@@ -247,7 +250,7 @@ reset({
                   label="Phone"
                   name="phone"
                   type="number"
-                  inputRef={register('phone')}
+                  inputRef={register("phone")}
                 />
               )}
             />
@@ -263,7 +266,7 @@ reset({
                   label="Address"
                   name="address"
                   type="text"
-                  inputRef={register('address')}
+                  inputRef={register("address")}
                 />
               )}
             />
@@ -282,4 +285,4 @@ reset({
   );
 };
 
-export default connect(null,mapDispatchToProps)(Profile);
+export default connect(null, mapDispatchToProps)(Profile);

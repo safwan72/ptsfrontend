@@ -10,6 +10,13 @@ export const loading = (load) => {
   };
 };
 
+export const cart = (load) => {
+  return {
+    type: actions.CARTOPEN,
+    payload: load,
+  };
+};
+
 
 export const logout = () => {
     localStorage.removeItem("data");

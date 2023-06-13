@@ -10,13 +10,11 @@ import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
-import SortIcon from '@mui/icons-material/Sort';
-import Popover from '@mui/material/Popover';
-import IconButton from '@mui/material/IconButton';
-import Chip from '@mui/material/Chip';
-import Slider from '@mui/material/Slider';
-
-
+import SortIcon from "@mui/icons-material/Sort";
+import Popover from "@mui/material/Popover";
+import IconButton from "@mui/material/IconButton";
+import Chip from "@mui/material/Chip";
+import Slider from "@mui/material/Slider";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -48,7 +46,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
@@ -78,7 +75,7 @@ const AllMenu = ({ home }) => {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? "simple-popover" : undefined;
 
   React.useEffect(() => {
     async function getData() {
@@ -102,18 +99,17 @@ const AllMenu = ({ home }) => {
     async function getData() {
       const request = await axios.get(`${HOSTURL}category/${id}/`);
       setalldishes(request?.data?.dishes);
-      handleClose()
+      handleClose();
     }
     getData();
   };
   const handleSearch = (searchText) => {
-    if(searchText){
+    if (searchText) {
       const filteredRows = alldishes?.filter((row) => {
         return row.dish_name.toLowerCase().includes(searchText?.toLowerCase());
       });
       setalldishes(filteredRows);
-    }
-    else{
+    } else {
       async function getData() {
         const request = await axios.get(`${HOSTURL}alldishes/${home ? 0 : 1}/`);
         setalldishes(request?.data);
@@ -126,13 +122,13 @@ const AllMenu = ({ home }) => {
     async function getData() {
       const request = await axios.get(`${HOSTURL}dishPrice/${value}/`);
       setalldishes(request?.data);
-      handleClose()
+      handleClose();
     }
     getData();
   };
 
   const handleChange = (event, newValue) => {
-    if (typeof newValue === 'number') {
+    if (typeof newValue === "number") {
       setValue(newValue);
     }
   };
@@ -157,55 +153,69 @@ const AllMenu = ({ home }) => {
         See Our Menu{" "}
       </Typography>
       {!home && (
-        <Box sx={{my:5}}>
+        <Box sx={{ my: 5 }}>
           <Grid container>
             <Grid item xs={12} sm={6}>
-            <IconButton aria-label="sort" onClick={handleClick}>
-        <SortIcon />
-      </IconButton>
-            <Popover
-            sx={{width:'75%'}}
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Box>
-          <Box sx={{p:1,mx:2}}>
-<Typography sx={{mt:5,ml:1}} variant="caption">Category</Typography>
-        <Box sx={{display:'flex',alignItems:'center',flexWrap:'wrap',p:1}}>
-          {categories?.map((item,index)=>(
-            <Chip label={item?.name} sx={{m:1}} key={item?.id}
-            onClick={() => getDishes(item?.id)}/>
-          ))}
-        </Box>
-          </Box>
+              <IconButton aria-label="sort" onClick={handleClick}>
+                <SortIcon />
+              </IconButton>
+              <Popover
+                sx={{ width: "75%" }}
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+              >
+                <Box>
+                  <Box sx={{ p: 1, mx: 2 }}>
+                    <Typography sx={{ mt: 5, ml: 1 }} variant="caption">
+                      Category
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                        p: 1,
+                      }}
+                    >
+                      {categories?.map((item, index) => (
+                        <Chip
+                          label={item?.name}
+                          sx={{ m: 1 }}
+                          key={item?.id}
+                          onClick={() => getDishes(item?.id)}
+                        />
+                      ))}
+                    </Box>
+                  </Box>
 
-        <Box sx={{p:1,mx:2}}>
-        <Typography sx={{mt:5,ml:1}} variant="caption">Price</Typography>
-        <Slider
-        aria-label="Price"
-        size="small"
-        value={value}
-        getAriaValueText={valuetext}
-        valueLabelDisplay="auto"
-        step={150}
-        marks
-        min={150}
-        max={1500}
-        onChange={handleChange}
-        onChangeCommitted={()=>{
-          getDishesByPrice()
-        }}
-      />
-        </Box>
-        </Box>
-        
-      </Popover>
+                  <Box sx={{ p: 1, mx: 2 }}>
+                    <Typography sx={{ mt: 5, ml: 1 }} variant="caption">
+                      Price
+                    </Typography>
+                    <Slider
+                      aria-label="Price"
+                      size="small"
+                      value={value}
+                      getAriaValueText={valuetext}
+                      valueLabelDisplay="auto"
+                      step={150}
+                      marks
+                      min={150}
+                      max={1500}
+                      onChange={handleChange}
+                      onChangeCommitted={() => {
+                        getDishesByPrice();
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </Popover>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Search

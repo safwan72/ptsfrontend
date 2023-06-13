@@ -5,8 +5,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { HOSTURL } from "../../utils/hostURL";
 
@@ -34,7 +33,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
 const Feedback = () => {
   const notify = (message) => toast(message);
 
-  const onSubmit = (values,e) => {
+  const onSubmit = (values, e) => {
     // addfeedback
     const data = {
       phone: values.phone,
@@ -49,13 +48,9 @@ const Feedback = () => {
     axios
       .post(`${HOSTURL}addfeedback/`, data, header)
       .then((response) => {
-        console.log(response);
         if (response?.data?.response === true) {
-          //   actions.resetForm({
-          //     phone: "", password: "", cpassword: "", username: ""
-          //   });
           notify("FeedBack Submitted Successfully");
-          e.target.reset()
+          e.target.reset();
         }
       })
       .catch((error) => {
@@ -65,7 +60,13 @@ const Feedback = () => {
     console.log(values);
   };
 
-  const { control, handleSubmit, register, reset,formState: { isSubmitSuccessful } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    register,
+    reset,
+    formState: { isSubmitSuccessful },
+  } = useForm({
     defaultValues: {
       phone: "",
       email: "",
@@ -73,14 +74,16 @@ const Feedback = () => {
     },
   });
   React.useEffect(() => {
-    if (!isSubmitSuccessful) { return }
-  
+    if (!isSubmitSuccessful) {
+      return;
+    }
+
     reset({
-        phone: "",
-        email: "",
-        message: "",
-    })
-  }, [isSubmitSuccessful,reset])
+      phone: "",
+      email: "",
+      message: "",
+    });
+  }, [isSubmitSuccessful, reset]);
   return (
     <Box sx={{ my: 5, mt: 20 }}>
       <Toaster
@@ -100,7 +103,7 @@ const Feedback = () => {
       </Typography>
 
       <Box>
-        <form onSubmit={handleSubmit(onSubmit)} >
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Controller
             name="email"
             control={control}
@@ -157,13 +160,6 @@ const Feedback = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            // onClick={() => {
-            //   reset({
-            //     phone: "",
-            //     email: "",
-            //     message: "",
-            //   });
-            // }}
           >
             Submit Feedback
           </ColorButton>

@@ -46,7 +46,7 @@ const SingleMenu = () => {
             </Typography>
             <Box sx={{ my: 1 }}>
               {dishstate?.dish_category?.map((item, index) => (
-                <Chip label={item?.name} sx={{m:1}}/>
+                <Chip label={item?.name} sx={{m:1}} key={index}/>
               ))}
             </Box>
             <Box

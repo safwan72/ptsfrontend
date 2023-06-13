@@ -5,6 +5,7 @@ const initstate = {
     user_details:null,
     user_id: null,
     loading: false,
+    cartOpen: false,
     authmessage: null,
   };
 
@@ -15,6 +16,11 @@ const initstate = {
         return {
           ...state,
           loading: action.payload,
+        };
+      case actions.CARTOPEN:
+        return {
+          ...state,
+          cartOpen: action.payload,
         };
       case actions.LOGOUT:
         return {

@@ -1,6 +1,4 @@
 import React from 'react'
-import Login from './pages/Login'
-import Home from './pages/Home'
 import { connect, useSelector } from 'react-redux';
 import * as actions from './app/actioncreator';
 import RouteElement from './RouteElement';
